@@ -98,4 +98,4 @@ curl -X POST "http://localhost:8081/graphql" \
   * Order Manager
 
 # Contact
-I'm software engineer, please contact me via email: [khoa.zamioza@gmail.com](mailto:khoa.zamioza@gmail.com)  if you have any concern.
+I'm software engineer, please contact me via email: [khoa.zamioza@gmail.com](mailto:khoa.zamioza@gmail.com)  if you have any concern or want to hire me.
