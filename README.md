@@ -75,6 +75,8 @@ curl -X POST "http://localhost:8081/graphql" \
 - Node.js
 - Docker && Docker Compose
 - RabbitMQ
+- GraphQL
+- Mysql
 
 # Testing
 - Run `docker-compose exec product-service npm test`
