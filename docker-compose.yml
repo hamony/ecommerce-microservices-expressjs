@@ -1,0 +1,88 @@
+version: '3.5'
+networks:
+  backend:
+    driver: ${NETWORKS_DRIVER}
+  
+  volumes:
+  mysql:
+    driver: ${VOLUMES_DRIVER}
+
+services:
+### MySQL ################################################
+    mysql:
+      build:
+        context: ./dockers/mysql
+        args:
+          - MYSQL_VERSION=${MYSQL_VERSION}
+      environment:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - TZ=${WORKSPACE_TIMEZONE}
+      volumes:
+        - ${DATA_PATH_HOST}/mysql:/var/lib/mysql
+        - ${MYSQL_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
+      ports:
+        - "${MYSQL_PORT}:3306"
+      networks:
+        - backend
+### Grafana ################################################
+    grafana:
+      build:
+        context: ./dockers/grafana
+      volumes:
+        - ${DATA_PATH_HOST}/grafana:/var/lib/grafana
+      ports:
+        - "${GRAFANA_PORT}:3000"
+      networks:
+        - backend
+
+### Prometheus ################################################
+    prometheus:
+      # https://hub.docker.com/r/prom/prometheus/tags
+      image: prom/prometheus:v2.28.1
+      networks:
+        - "backend"
+      ports:
+        - "9090:9090"
+      volumes:
+        - ${DATA_PATH_HOST}/prometheus:/prometheus
+        - ./dockers/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    
+    ### RabbitMQ #############################################
+    rabbitmq:
+      build: ./dockers/rabbitmq
+      ports:
+        - "${RABBITMQ_NODE_HOST_PORT}:5672"
+        - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
+        - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671"
+        - "${RABBITMQ_WEB_STOMP_HOST_PORT}:15674"
+      privileged: true
+      hostname: laradock-rabbitmq
+      volumes:
+        - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+        - ./dockers/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+        - ./dockers/rabbitmq/management_agent.disable_metrics_collector.conf:/etc/rabbitmq/conf.d/management_agent.disable_metrics_collector.conf
+      networks:
+        - backend
+
+    ### Product Catalog service #############################################
+    product-service:
+      build: ./product-catalog
+      volumes:
+        - ./product-catalog:/app
+      ports:
+        - "${PRODUCT_SERVICE_PORT}:8080"
+      networks:
+        - backend
+    
+    ### Order Catalog service #############################################
+    order-service:
+      build: ./order-manager
+      volumes:
+        - ./order-manager:/app
+      ports:
+        - "${ORDER_SERVICE_PORT}:8081"
+      networks:
+        - backend

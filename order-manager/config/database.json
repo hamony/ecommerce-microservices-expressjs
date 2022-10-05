@@ -1,0 +1,43 @@
+{
+  "localhost": {
+    "username": "root",
+    "password": "root",
+    "database": "order_manager",
+    "host": "127.0.0.1",
+    "port": "3306",
+    "dialect": "mysql",
+    "migrationStorageTableName": "migrations"
+  },
+  "development": {
+    "username": "root",
+    "password": "root",
+    "database": "order_manager",
+    "host": "mysql",
+    "port": "3306",
+    "dialect": "mysql",
+    "migrationStorageTableName": "migrations"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "migrationStorageTableName": "migrations"
+  },
+  "production": {
+    "username": "test",
+    "password": "test",
+    "database": "d98dt13s3pl90r",
+    "host": "test",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    },
+    "use_env_variable": "DATABASE_URL",
+    "migrationStorageTableName": "migrations"
+  }
+}
